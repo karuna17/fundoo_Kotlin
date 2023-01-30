@@ -17,10 +17,7 @@ class RegisterViewModel(private val userAuthService: UserAuthService) : ViewMode
     fun registerUser(user: User) {
         when {
             user.name.isEmpty() -> {
-                _userRegistrationStatus.value = Failed(
-                    "Please Enter your first name.",
-                    FailingReason.NAME
-                )
+                _userRegistrationStatus.value = Failed("Please Enter your first name.", FailingReason.NAME)
             }
             user.email.isEmpty() -> {
                 _userRegistrationStatus.value = Failed("Please Enter Email Id", FailingReason.EMAIL)

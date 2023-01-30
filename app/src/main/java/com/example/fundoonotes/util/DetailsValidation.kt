@@ -1,6 +1,7 @@
 package com.example.fundoonotes.util
 
 import android.widget.EditText
+import java.util.*
 
 class DetailsValidation {
     companion object {
@@ -27,4 +28,5 @@ class DetailsValidation {
             return true
         }
     }
+
 }

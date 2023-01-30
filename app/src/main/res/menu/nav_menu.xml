@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/notes"
+        android:icon="@drawable/ic_baseline_event_note_24"
+        android:title="@string/notes" />
+
+    <item android:id="@+id/reminder_list"
+        android:icon="@drawable/ic_baseline_notifications_24"
+        android:title="@string/reminders" />
+
+    <item android:id="@+id/menu_logout"
+        android:icon="@drawable/ic_round_login_24"
+        android:title="Logout" />
+
+    <group android:id="@+id/add_labels">
+        <item
+            android:id="@+id/createNewLabelNavItem"
+            android:title="Create new label"
+            android:icon="@drawable/ic_baseline_add_24"/>
+    </group>
+
+</menu>

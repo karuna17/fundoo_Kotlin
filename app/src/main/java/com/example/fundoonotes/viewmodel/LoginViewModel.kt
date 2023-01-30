@@ -3,7 +3,6 @@ package com.example.fundoonotes.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.fundoonotes.model.User
 import com.example.fundoonotes.model.UserAuthService
 import com.example.fundoonotes.util.*
 
@@ -17,6 +16,15 @@ class LoginViewModel(val userAuthService: UserAuthService) : ViewModel() {
     private val _logoutStatus = MutableLiveData<Boolean>()
     val logoutStatus = _logoutStatus as LiveData<Boolean>
 
+    private val _isUserLoggedIn = MutableLiveData<Boolean>()
+    val isUserLoggedIn = _isUserLoggedIn as LiveData<Boolean>
+
+    fun checkUserExistence() {
+        userAuthService.getLoginStatus{
+            _isUserLoggedIn.value = it
+        }
+    }
+
     fun loginToFundoo(email: String, password: String) {
         _loginStatus.value = Loading
         when {
@@ -26,6 +34,24 @@ class LoginViewModel(val userAuthService: UserAuthService) : ViewModel() {
                 Failed("Password Id is required", FailingReason.PASSWORD)
             else -> {
                 userAuthService.userLogin(email, password) {
+                    when (it.status) {
+                        true -> _loginStatus.value = Success(SUCCESS_MSG, it.idToken, it.localId)
+                        false -> _loginStatus.value = Failed(FAIL_MSG, FailingReason.OTHER)
+                    }
+                }
+            }
+        }
+    }
+
+    fun loginWithApi(email: String, password: String) {
+        _loginStatus.value = Loading
+        when {
+            email.isEmpty() -> _loginStatus.value =
+                Failed("Eamil Id is required", FailingReason.EMAIL)
+            password.isEmpty() -> _loginStatus.value =
+                Failed("Password Id is required", FailingReason.PASSWORD)
+            else -> {
+                userAuthService.loginWithRestApi(email, password) {
                     when (it.status) {
                         true -> _loginStatus.value = Success(SUCCESS_MSG, it.idToken, it.localId)
                         false -> _loginStatus.value = Failed(FAIL_MSG, FailingReason.OTHER)

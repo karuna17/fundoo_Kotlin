@@ -1,25 +1,32 @@
 package com.example.fundoonotes.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.fundoonotes.R
-import com.example.fundoonotes.databinding.FragmentRegistrationPageBinding
-import com.example.fundoonotes.listeners.UserAuthListener
 import com.example.fundoonotes.model.User
 import com.example.fundoonotes.model.UserAuthService
-import com.example.fundoonotes.util.*
+import com.example.fundoonotes.util.Failed
+import com.example.fundoonotes.util.FailingReason
+import com.example.fundoonotes.util.Loading
+import com.example.fundoonotes.util.Success
 import com.example.fundoonotes.viewmodel.RegisterViewModel
 import com.example.fundoonotes.viewmodel.RegisterViewModelFactory
 import com.example.fundoonotes.viewmodel.SharedViewModel
 import com.example.fundoonotes.viewmodel.SharedViewModelFactory
 
 class RegistrationPage : Fragment() {
+    companion object {
+        internal const val TAG = "RegistrationPage"
+    }
+
     //private lateinit var userAuthService: UserAuthService
     private lateinit var name: EditText
     private lateinit var email: EditText
@@ -58,53 +65,55 @@ class RegistrationPage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registerButton.setOnClickListener {
-            register()
-        }
+
+        register()
         gotoLoginPage()
     }
 
     private fun register() {
-        val mName = name.text.toString().trim()
-        val mEmail = email.text.toString().trim()
-        val mPassword = password.text.toString().trim()
-        val user = User(
-            name = mName,
-            email = mEmail,
-            password = mPassword,
-            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/PICA.jpg/900px-PICA.jpg"
-        )
-
-        registerViewModel.userRegistrationStatus.observe(viewLifecycleOwner, Observer {
+        registerButton.setOnClickListener {
+            val mName = name.text.toString().trim()
+            val mEmail = email.text.toString().trim()
+            val mPassword = password.text.toString().trim()
+            val user = User(
+                name = mName,
+                email = mEmail,
+                password = mPassword,
+                imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/PICA.jpg/900px-PICA.jpg"
+            )
             registerViewModel.registerUser(user)
-            when (it) {
-                is Failed -> {
-                    when (it.reason) {
-                        FailingReason.NAME -> {
-                            progBar.visibility = View.GONE
-                            name.error = it.message
-                            name.requestFocus()
-                        }
-                        FailingReason.EMAIL -> {
-                            progBar.visibility = View.GONE
-                            email.error = it.message
-                            email.requestFocus()
-                        }
-                        FailingReason.PASSWORD -> {
-                            progBar.visibility = View.GONE
-                            password.error = it.message
-                            password.requestFocus()
-                        }
-                        FailingReason.OTHER -> {
-                            progBar.visibility = View.GONE
-                            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            registerViewModel.userRegistrationStatus.observe(viewLifecycleOwner, Observer {
+                Log.e(TAG, "checkRegisterDetails: ${it}")
+
+                when (it) {
+                    is Failed -> {
+                        when (it.reason) {
+                            FailingReason.NAME -> {
+                                progBar.visibility = View.GONE
+                                name.error = it.message
+                                name.requestFocus()
+                            }
+                            FailingReason.EMAIL -> {
+                                progBar.visibility = View.GONE
+                                email.error = it.message
+                                email.requestFocus()
+                            }
+                            FailingReason.PASSWORD -> {
+                                progBar.visibility = View.GONE
+                                password.error = it.message
+                                password.requestFocus()
+                            }
+                            FailingReason.OTHER -> {
+                                progBar.visibility = View.GONE
+                                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
+                    is Success -> registerUser(it.message)
+                    Loading -> progBar.visibility = View.VISIBLE
                 }
-                is Success -> registerUser(it.message)
-                Loading -> progBar.visibility = View.VISIBLE
-            }
-        })
+            })
+        }
     }
 
     private fun registerUser(message: String) {
@@ -119,7 +128,18 @@ class RegistrationPage : Fragment() {
             sharedViewModel.setGoToRegisterationPage(false)
         }
     }
-//    private fun register() {
+
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity).supportActionBar?.show()
+    }
+}
+    //    private fun register() {
 //        registerButton.setOnClickListener {
 //            val mName = name.text.toString().trim()
 //            val mEmail = email.text.toString().trim()
@@ -146,4 +166,4 @@ class RegistrationPage : Fragment() {
 //            }
 //        }
 //    }
-}
+

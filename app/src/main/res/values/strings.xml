@@ -2,4 +2,17 @@
     <string name="app_name">Fundoo Notes</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search">search</string>
+    <string name="profile_menu">profile_menu</string>
+    <string name="list_view">list_view</string>
+    <string name="notes">Notes</string>
+    <string name="reminders">Reminders</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="profile_email">ProfileEmail</string>
+    <string name="profile_name">profileName</string>
+    <string name="signout">signout</string>
+    <string name="logout">logout</string>
+    <string name="Reminder">Reminder</string>
+    <string name="backpress">backPress</string>
 </resources>
